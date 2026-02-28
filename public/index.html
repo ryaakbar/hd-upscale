@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HDUpscale — AI Image Enhancer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="marquee-top">
+        <div class="marquee-content">
+            HD UPSCALE <span class="marquee-dot">◆</span>
+            AI IMAGE ENHANCER <span class="marquee-dot">◆</span>
+            2X RESOLUTION <span class="marquee-dot">◆</span>
+            POWERED BY AI <span class="marquee-dot">◆</span>
+            FREE TO USE <span class="marquee-dot">◆</span>
+            NO LOGIN NEEDED <span class="marquee-dot">◆</span>
+            HD UPSCALE <span class="marquee-dot">◆</span>
+            AI IMAGE ENHANCER <span class="marquee-dot">◆</span>
+            2X RESOLUTION <span class="marquee-dot">◆</span>
+            POWERED BY AI <span class="marquee-dot">◆</span>
+        </div>
+    </div>
+
+    <nav class="navbar" id="navbar">
+        <div class="brand-container">
+            <div class="brand-icon-wrap">
+                <i class="fa-solid fa-wand-magic-sparkles" style="font-size:0.85rem;color:#fff;"></i>
+            </div>
+            <div class="brand-glitch">HD<span>Upscale</span></div>
+        </div>
+        <div class="nav-right">
+            <div class="status-pill">
+                <div class="dot-live"></div>
+                ONLINE
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <div class="hero-header reveal">
+            <div class="hero-badge">✨ AI-Powered · 2x Resolution Boost</div>
+            <h1 class="hero-title">Enhance <span class="grad-text">Image</span><br>Quality Instantly.</h1>
+            <p class="hero-sub">Upload foto lo, AI kita tingkatkan resolusinya 2x secara otomatis. Gratis, cepat, tanpa login.</p>
+        </div>
+
+        <!-- Upload Card -->
+        <div class="glass-card reveal delay-1" id="uploadCard">
+            <div class="card-header">
+                <div class="brand-icon-wrap" style="width:50px;height:50px;border-radius:13px;font-size:1.3rem;">
+                    <i class="fa-solid fa-image"></i>
+                </div>
+                <div class="card-header-info">
+                    <div class="header-label">🖼️ Supports JPG, PNG, WEBP</div>
+                    <div class="header-title">Upload foto yang mau di-enhance</div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <!-- Drop Zone -->
+                <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+                    <div class="drop-zone-content" id="dropContent">
+                        <div class="drop-icon">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                        </div>
+                        <div class="drop-text">Drag & drop foto di sini</div>
+                        <div class="drop-sub">atau klik untuk pilih file</div>
+                        <div class="drop-formats">JPG · PNG · WEBP · Max 10MB</div>
+                    </div>
+                    <div class="drop-zone-preview hidden" id="previewWrap">
+                        <img id="previewImg" src="" alt="preview">
+                        <div class="preview-overlay">
+                            <i class="fa-solid fa-pen"></i> Ganti Foto
+                        </div>
+                    </div>
+                </div>
+
+                <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFile(this)">
+
+                <!-- File Info -->
+                <div id="fileInfo" class="file-info hidden">
+                    <i class="fa-solid fa-file-image"></i>
+                    <span id="fileName">-</span>
+                    <span id="fileSize" class="file-size">-</span>
+                </div>
+
+                <!-- Scale Option -->
+                <div class="scale-section">
+                    <label class="input-label">Scale Factor</label>
+                    <div class="scale-options">
+                        <button class="scale-btn active" data-scale="2">
+                            <span class="scale-val">2x</span>
+                            <span class="scale-desc">720p → 1440p</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button id="enhanceBtn" onclick="doUpscale()" class="cyber-button" disabled>
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span class="btn-text">Enhance Image</span>
+                    <span class="btn-arrow">→</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div id="loading" class="glass-card loading-card hidden">
+            <div class="loader-ring"></div>
+            <div class="loader-text" id="loadingText">Uploading image...</div>
+            <div class="loader-progress"><div class="loader-bar"></div></div>
+            <div class="loader-steps">
+                <div class="lstep active" id="step1">📤 Upload</div>
+                <div class="lstep" id="step2">🤖 AI Processing</div>
+                <div class="lstep" id="step3">✅ Done</div>
+            </div>
+        </div>
+
+        <!-- Error -->
+        <div id="error-msg" class="glass-card error-card hidden">
+            <div class="error-icon">⚠️</div>
+            <div>
+                <div class="error-title">Enhancement Failed</div>
+                <div class="error-body" id="error-text"></div>
+            </div>
+        </div>
+
+        <!-- Result -->
+        <div id="result" class="hidden">
+            <div class="glass-card result-card reveal">
+                <div class="result-header">
+                    <div class="result-platform-badge">
+                        <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--blue-400)"></i>
+                        <span>AI ENHANCED</span>
+                    </div>
+                    <div class="result-badge">
+                        <span class="dot-live"></span> DONE
+                    </div>
+                </div>
+
+                <!-- Before After Comparison -->
+                <div class="compare-wrap">
+                    <div class="compare-side">
+                        <div class="compare-label">BEFORE</div>
+                        <img id="beforeImg" src="" alt="before" class="compare-img">
+                    </div>
+                    <div class="compare-divider">
+                        <i class="fa-solid fa-arrows-left-right"></i>
+                    </div>
+                    <div class="compare-side">
+                        <div class="compare-label enhanced">AFTER ✨</div>
+                        <img id="afterImg" src="" alt="after" class="compare-img">
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="result-stats">
+                    <div class="stat-box">
+                        <div class="stat-val">2x</div>
+                        <div class="stat-lbl">Resolution</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-val">AI</div>
+                        <div class="stat-lbl">Enhanced</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-val" id="statFormat">JPG</div>
+                        <div class="stat-lbl">Format</div>
+                    </div>
+                </div>
+
+                <div class="result-actions">
+                    <a id="downloadBtn" href="#" download="hdupscale-enhanced.jpg" class="btn-visit">
+                        <i class="fa-solid fa-download"></i>
+                        Download HD
+                    </a>
+                    <button onclick="resetAll()" class="btn-reset" title="Upload foto baru">
+                        <i class="fa-solid fa-rotate-left"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- How It Works -->
+        <div class="glass-card howto-card reveal delay-2">
+            <div class="howto-title">⚡ Cara Pakai</div>
+            <div class="howto-steps">
+                <div class="howto-step">
+                    <div class="howto-num">1</div>
+                    <div>Upload foto JPG, PNG, atau WEBP</div>
+                </div>
+                <div class="howto-step">
+                    <div class="howto-num">2</div>
+                    <div>Klik tombol Enhance Image</div>
+                </div>
+                <div class="howto-step">
+                    <div class="howto-num">3</div>
+                    <div>Tunggu AI proses (~5-15 detik)</div>
+                </div>
+                <div class="howto-step">
+                    <div class="howto-num">4</div>
+                    <div>Download hasil HD lo!</div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="sann-footer reveal">
+            <div class="footer-divider"></div>
+            <p class="footer-text">Powered by</p>
+            <p class="footer-brand">RYAAKBAR</p>
+            <p class="footer-sub">Free forever · No login · No cap</p>
+        </footer>
+
+    </div>
+
+    <div class="scroll-btns" id="scrollBtns">
+        <button class="scroll-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+        </button>
+        <button class="scroll-btn" onclick="window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
